@@ -40,7 +40,7 @@ python ClassNameDeobfuscator.py com.someapp
 python ClassNameDeobfuscator.py -o /path/to/your/out.txt com.someapp
 ```
 
-Using the namespace for the app as the namespace argument, in the example it's the `com.someapp` argument given to `ClassNameDeobfuscator.py`, is helpful to avoid going through thrid-party libraries and such that are included in the app. Unless, that is your goal. Use commonsense and set the `namespace` according to your needs.
+Using the namespace for the app as the namespace argument, in the example it's the `com.someapp` argument given to `ClassNameDeobfuscator.py`, is helpful to avoid going through thrid-party libraries and such that are included in the app. Unless, that is your goal. Use common sense and set the `namespace` according to your needs. The script will try to parse the given namespace argument into a directory structure. So, if nothing else, you can just `.`-delimit to the directory that you care about.
 
 ## Demo & Remediation
 
