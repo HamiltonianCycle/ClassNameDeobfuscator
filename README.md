@@ -66,4 +66,6 @@ Seems logical enough. Let's oblige. Rebuilding the demo app with the Proguard ru
 
 ## Conclusion
 
-In summary, even if you're obfuscating your app, you may be inadvertently leaking the class names by leaving the original source file attribute (and possibly other information!) in your obfsucated app. As we can see from the above examples, leaving the source file attribute can help a reverse engineer tremendously because it gives them whatever contextual information is present in your class names. However, whether you want strip these attributes out is risk/reward trade off you will need to consider for yourself. After all, the Proguard team isn't likely suggesting *keeping* these attributes without good reason. Like always, consider your situation, apply common sense, and do what's best for you.
+In summary, even if you're obfuscating your app, you may be inadvertently leaking the class names by leaving the original source file attribute (and possibly other information!) in your obfsucated app. As we can see from the above examples, leaving the source file attribute can help a reverse engineer tremendously because it gives them whatever contextual information is present in your class names.
+
+However, whether you want strip these attributes out is risk/reward trade off you will need to consider for yourself. After all, the Proguard team isn't likely suggesting *keeping* these attributes without good reason. Like always, consider your situation, apply common sense, and do what's best for you.
