@@ -1,7 +1,9 @@
 # ClassNameDeobfuscator
 This is a simple script to parse through the .smali files produced by apktool and extract the .source annotation lines.
 
-Obfuscation can be a pain to deal with when reversing an app. However, some apps do not have the `.source` annotation line removed/mangled druing the obfuscation process. This leaves the original Java class file's name intact in the obfuscated code. We can abuse this to partially deobfuscate the class names.  
+Obfuscation can be a pain to deal with when reversing an app. However, some apps do not have the `.source` annotation line removed/mangled druing the obfuscation process. This leaves the original Java class file name intact in the obfuscated code. We can abuse this to partially deobfuscate the class names.
+
+To be clear, I am not claiming that I am the first to discover this, for lack of a better term let's call it, information leakage. However, I did stumble upon it independently while reversing an obfuscated app. While looking at a smali file, I noticed a `.source` line and a lightbulb went off. So, I threw together this script to show off the extent of what information can be revealed.  See the demo section below for some relevant Proguard details.
 
 ## Requirements
  * This assumes you have run `apktool` (or some other smali producing tool) to create smali files for the target app
@@ -40,6 +42,28 @@ python ClassNameDeobfuscator.py -o /path/to/your/out.txt com.someapp
 
 Using the namespace for the app as the namespace argument, in the example it's the `com.someapp` argument given to `ClassNameDeobfuscator.py`, is helpful to avoid going through thrid-party libraries and such that are included in the app. Unless, that is your goal. Use commonsense and set the `namespace` according to your needs.
 
-## Coming Soon
-  * Demo example
-  * Remediation steps for Proguard
+## Demo & Remediation
+
+For all the examples below, I will be using a silly little sample app I put together. LINK HERE
+
+It would appear that new-ish versions of Android Studio (I am on Beta 0.8.6) will remove `.source` annotations with a very minimal Proguard configuration:
+
+IMAGE HERE OF CONFIG
+
+This was surprising, I was expectign the default configs to expose the class name leaking described above.  That's great, that the default obfuscation of Proguard does remove `.source` lines.
+
+IMAGE HERE OF INITIAL OUTPUT
+
+Let's work backwards to see what Proguard rules could be enabled to leak class names.  The place to start for this search is, of course, [the manual](https://stuff.mit.edu/afs/sipb/project/android/sdk/android-sdk-linux/tools/proguard/docs/index.html#manual/usage.html).
+
+Sure enough, buried down in the usage is a rule called `-keepattributes`, whose description contains the following statements,
+
+> For example, you should at least keep the Exceptions, InnerClasses, and Signature attributes when processing a library. You should also keep the SourceFile and LineNumberTable attributes for producing useful obfuscated stack traces.
+
+Seems logical enough. Let's oblige; rebuilding the Proguard rule `-keepattributes SourceFile LineNumberTable` yields the following.
+
+IMAGE HERE OF LEAKED CLASS NAMES
+
+## Conclusion
+
+In summary, even if you're obfuscating your app, you may be inadvertently leaking the class names by leaving the original source file attribute (and possibly other information!) your "obfsucated" app. As we can see from the examples, leaving the source file attribute can help a reverse engineer tremendously because it gives them whatever contextual information is present in your class names. However, whether you want strip these attributes out is worth considering; after all, the Proguard team likely isn't suggesting *keeping* these attributes without good reason. Like always, consider your situation, apply commonsense, and do what's best for you.
