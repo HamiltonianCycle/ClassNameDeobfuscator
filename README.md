@@ -27,11 +27,10 @@ optional arguments:
 
 ## Example
 ````
-# Prepwork. Yeah, it sucks that these scripts need to be in the smali dir, but I'm lazy.
+# Prepwork. Yeah, it sucks that the script needs to be in the smali dir, but I'm lazy.
 apktool d com.someapp.apk
 cd com.someapp/smali/
 cp /path/to/ClassNameDeobfuscator.py .
-cp /path/to/SmaliFile.py .
 
 # Print results to stdout:
 python ClassNameDeobfuscator.py com.someapp

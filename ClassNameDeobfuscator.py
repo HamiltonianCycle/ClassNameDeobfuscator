@@ -1,6 +1,5 @@
 import argparse
 import os
-from SmaliFile import SmaliFile
 
 __author__ = 'HamiltonianPath'
 
@@ -10,6 +9,20 @@ def parse_args():
     parser.add_argument('namespace', type=str, help='base namespace to begin deobfuscating classes')
     parser.add_argument('-o', dest='outfile', default=None, metavar='output.txt', type=str, help='output filename to save deobfusacted class mapping')
     return parser.parse_args()
+
+
+class SmaliFile:
+    """A class to represent a Smali file."""
+
+    raw_lines = []  # A list of all lines in the Smali file.
+
+    def __init__(self, filepath=None):
+        if filepath:
+            self.readsmalifile(filepath)
+
+    def readsmalifile(self, filepath):
+        f = open(filepath, 'r')
+        self.raw_lines = f.readlines()
 
 
 class ClassNameDeobfuscator():
