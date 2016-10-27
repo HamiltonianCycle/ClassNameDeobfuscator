@@ -8,6 +8,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Execute in the smali directory of a disassembled APK')
     parser.add_argument('namespace', type=str, help='base namespace to begin deobfuscating classes')
     parser.add_argument('-o', dest='outfile', default=None, metavar='output.txt', type=str, help='output filename to save deobfusacted class mapping')
+    parser.add_argument('-f', dest='outformat', default='default', choices=['default','bulk'], metavar='format', type=str, help='output formatting style')
     return parser.parse_args()
 
 
@@ -26,12 +27,21 @@ class SmaliFile:
 
 
 class ClassNameDeobfuscator():
-    def __init__(self, namespace, outfilepath):
+    def __init__(self, namespace, outfilepath, outputformat):
         self.namespace = namespace
         self.outfilepath = outfilepath
+        self.outputformat = outputformat
         self.outfile = None
         if self.outfilepath:
             self.outfile = open(self.outfilepath, 'w')
+
+    def format_message(self, namespace, obfuscated, deobfuscated):
+        if self.outputformat == 'bulk':
+            return '{0}|{1}'.format(obfuscated, deobfsucated)
+        else:
+            obfuscated_full_namesapce = '{0}.{1}'.format(namespace, obfuscated)
+            deobfuscated_full_namepsace = '{0}.{1}'.format(namespace, deobfuscated)
+            return '{0} => {1}'.format(obfuscated_full_namespace, deobfuscated_full_namespace)
 
     def out(self, message):
         if self.outfile:
@@ -67,10 +77,9 @@ class ClassNameDeobfuscator():
             namespace = self.path_to_namespace(dirpath)
             for file in filenames:
                 if file.endswith('smali'):
-                    obfuscated_full_namesapce = '{0}.{1}'.format(namespace, file)
                     deobfuscated_name = self.deobfuscate_smali_file_class(dirpath, file)
-                    deobfuscated_full_namepsace = '{0}.{1}'.format(namespace, deobfuscated_name)
-                    self.out('{0} => {1}'.format(obfuscated_full_namesapce, deobfuscated_full_namepsace))
+                    message = self.format_message(file, deobfuscated_name)
+                    self.out(message)
 
     def execute(self):
         namespace_dir = self.namespace_to_path(self.namespace)
@@ -86,7 +95,7 @@ class ClassNameDeobfuscator():
 
 def main():
     args = parse_args()
-    deobfuscator = ClassNameDeobfuscator(args.namespace, args.outfile)
+    deobfuscator = ClassNameDeobfuscator(args.namespace, args.outfile, args.outformat)
     deobfuscator.execute()
 
 if __name__ == '__main__':
