@@ -75,10 +75,10 @@ class ClassNameDeobfuscator():
         self.out(' [*] Deobfuscating class names from namespace {0}...'.format(self.path_to_namespace(namespace_dir)))
         for dirpath, dirnames, filenames in os.walk(namespace_dir):
             namespace = self.path_to_namespace(dirpath)
-            for file in filenames:
-                if file.endswith('smali'):
-                    deobfuscated_name = self.deobfuscate_smali_file_class(dirpath, file)
-                    message = self.format_message(file, deobfuscated_name)
+            for filename in filenames:
+                if filename.endswith('smali'):
+                    deobfuscated_name = self.deobfuscate_smali_file_class(dirpath, filename)
+                    message = self.format_message(filename, deobfuscated_name)
                     self.out(message)
 
     def execute(self):
